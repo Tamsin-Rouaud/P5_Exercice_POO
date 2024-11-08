@@ -1,65 +1,73 @@
 <?php
-// Déclaration du typage strict pour s'assurer que les types de données passés aux fonctions et aux méthodes sont strictement respectés
+// Active le mode strict des types pour exiger que les arguments et les valeurs de retour respectent strictement les types déclarés
 declare(strict_types=1);
 
 // Inclusion du fichier de configuration où sont stockées les constantes de connexion à la base de données
 require_once(__DIR__ . '/config/mysql.php');
 
 // Déclaration de la classe DBConnect pour gérer la connexion à la base de données
-class DBConnect 
-{
-    // Déclaration d'une propriété privée $pdo qui contiendra l'objet PDO (utilisé pour la connexion à la base de données)
+class DBConnect {
+    // Propriété privée $pdo qui contiendra l'objet PDO pour établir la connexion à la base de données
     private $pdo;
+    
+    // Propriété statique privée $instance initialisée à NULL qui contiendra l'instance unique de la classe DBConnect (Singleton)
+    private static $instance = null;
+    
+    // Propriétés privées pour stocker les informations de connexion (constantes définies dans mysql.php)
+    private $host = MYSQL_HOST;
+    private $db = MYSQL_BASENAME;
+    private $user = MYSQL_ID;
+    private $pass = MYSQL_PASSWORD;
 
-    // Déclaration d'une méthode publique getPDO qui retourne un objet PDO
-    public function getPDO(): PDO
-    {
-        // Vérifie si la propriété $pdo est null (pas encore initialisée)
+    // Constructeur privé pour empêcher l'instanciation directe de la classe (fait partie du pattern Singleton)
+    private function __construct() {
+        // Si la connexion n'est pas encore établie, initialise l'objet PDO
         if ($this->pdo === null) {
             try {
-                // Création d'un nouvel objet PDO pour la connexion à la base de données
-                $this->pdo = new PDO(
-                    // Utilisation de sprintf pour formater la chaîne de connexion avec l'hôte et le nom de la base de données
-                    sprintf('mysql:host=%s;dbname=%s;charset=utf8', MYSQL_HOST, MYSQL_BASENAME),
-                    
-                    // Identifiant pour la connexion à la base de données
-                    MYSQL_ID,
-                    
-                    // Mot de passe pour la connexion à la base de données
-                    MYSQL_PASSWORD,
-                    
-                    // Tableau d'options pour la connexion PDO
-                    [
-                        // Définition du mode de gestion des erreurs pour lever des exceptions en cas d'erreur
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-                    ]
-                );
-            } catch (Exception $e) {
-                // Capture l'exception en cas d'erreur et arrête l'exécution du script en affichant un message d'erreur
-                die('Erreur : ' . $e->getMessage());
+                // Création de l'objet PDO en utilisant les informations de connexion
+                $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->db", $this->user, $this->pass);
+                // Configuration de PDO pour lever une exception en cas d'erreur (mode ERRMODE_EXCEPTION)
+                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                // En cas d'erreur de connexion, affiche un message d'erreur
+                echo 'Erreur de connexion : ' . $e->getMessage();
             }
         }
-        // Retourne l'objet PDO créé ou déjà existant
+    }
+
+    // Méthode statique getInstance() pour récupérer l'instance unique de DBConnect
+    public static function getInstance(): self
+    {
+        // Si l'instance n'est pas encore créée, en crée une nouvelle
+        if (is_null(self::$instance)) {
+            var_dump("Classe instanciée");
+            self::$instance = new self();
+        }
+        // Retourne l'instance unique de DBConnect
+        return self::$instance;
+    }
+
+    // Méthode pour récupérer l'objet PDO, permettant d'exécuter des requêtes SQL à partir d'autres parties du code
+    public function getPDO() {
         return $this->pdo;
     }
 }
 
 // Bloc de test pour vérifier le fonctionnement de la classe DBConnect
 try {
-    // Instancie un objet de la classe DBConnect
-    $db = new DBConnect();
+    // Appel à la méthode statique getInstance() pour obtenir l'instance unique de DBConnect
+    $db = DBConnect::getInstance();
 
-    // Appelle la méthode getPDO pour obtenir l'objet PDO
+    // Appel de la méthode getPDO pour récupérer l'objet PDO
     $pdo = $db->getPDO();
 
-    // Exécute une requête SQL simple pour tester la connexion (vérifie simplement que la requête peut s'exécuter)
-    $stmt = $pdo->query('SELECT 1');
+    // Exécution d'une requête SQL simple pour tester la connexion
+    $statement = $pdo->query('SELECT 1');
 
     // Affiche un message de succès si la connexion et la requête se sont bien déroulées
     echo 'Connexion réussie et requête exécutée avec succès.';
 } catch (Exception $e) {
-    // Capture et affiche un message en cas d'erreur lors de la création de l'objet PDO ou de l'exécution de la requête
+    // Capture et affiche un message d'erreur en cas de problème de connexion ou d'exécution de la requête
     echo 'Erreur : ' . $e->getMessage();
 }
-
 ?>
