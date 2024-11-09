@@ -60,16 +60,25 @@ public function setId(int $id): void {
     }
 
     // Méthode toString pour afficher l'objet Contact sous forme de chaîne
-    public function toString(): string {
-        return "Id: {$this->id}, Nom: {$this->name}, Email: {$this->email}, Téléphone: {$this->phone_number}";
-    }
+    public function __toString(): string {
+    return "{$this->id}, {$this->name}, {$this->email}, {$this->phone_number}";
 }
 
-// Bloc de test pour vérifier le bon fonctionnement de la classe Contact
-// Crée une instance de Contact
-$contact = new Contact("John Doe", "john.doe@inconnu.com", "02458796");
+}
 
-// Affiche les informations du contact en utilisant __toString (via echo directement)
-echo $contact->toString();
+
+
+
+
+
+
+
+
+// // Bloc de test pour vérifier le bon fonctionnement de la classe Contact
+// // Crée une instance de Contact
+// $contact = new Contact("John Doe", "john.doe@inconnu.com", "02458796");
+
+// // Affiche les informations du contact en utilisant __toString (via echo directement)
+// echo $contact->toString();
 
 

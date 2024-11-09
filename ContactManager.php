@@ -8,59 +8,145 @@ require_once 'DBConnect.php';
 require_once 'Contact.php';
 
 // Déclaration de la classe ContactManager pour gérer les opérations CRUD (Create, Read, Update, Delete) sur les contacts
+// ContactManager.php
 class ContactManager {
-    // Propriété privée $db qui contient l'instance de connexion à la base de données
     private $db;
 
-    // Constructeur de la classe ContactManager qui initialise la connexion à la base de données
     public function __construct() {
-        // Récupère l'instance de PDO à partir de la classe DBConnect
         $this->db = DBConnect::getInstance()->getPDO();
     }
 
-    // Méthode findAll() pour récupérer tous les contacts de la base de données
     public function findAll(): array {
-        // Initialisation d'un tableau pour stocker les objets Contact
         $contacts = [];
-
         try {
-            // Exécute la requête SQL pour sélectionner tous les contacts dans la table 'contact'
             $statement = $this->db->query('SELECT * FROM contact');
-
-            // Parcourt chaque ligne du résultat de la requête pour créer un objet Contact pour chaque contact
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-                // Crée une instance de Contact avec les données récupérées
                 $contact = new Contact($row['name'], $row['email'], $row['phone_number']);
-                // On définit l'ID ici, car il est auto-généré dans la base de données
-            $contact->setId($row['id']);
-                // Ajoute l'objet Contact créé au tableau $contacts
+                $contact->setId($row['id']);
                 $contacts[] = $contact;
             }
         } catch (PDOException $e) {
-            // En cas d'erreur lors de la récupération des contacts, affiche un message d'erreur
             echo 'Erreur lors de la récupération des contacts : ' . $e->getMessage();
         }
-
-        // Affiche le contenu de $contacts pour vérifier qu'il contient bien des objets Contact
-        var_dump($contacts);
-
-        // Retourne le tableau d'objets Contact
         return $contacts;
+    }
+
+    // Méthode pour récupérer un contact par son ID
+    public function findById(int $id): ?Contact {
+        try {
+            $statement = $this->db->prepare('SELECT * FROM contact WHERE id = :id');
+            $statement->execute(['id' => $id]);
+            $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+            // Si le contact est trouvé, crée et retourne l'objet Contact
+            if ($row) {
+                $contact = new Contact($row['name'], $row['email'], $row['phone_number']);
+                $contact->setId($row['id']);
+                return $contact;
+            } else {
+                return null;  // Aucun contact trouvé
+            }
+        } catch (PDOException $e) {
+            echo 'Erreur lors de la recherche du contact : ' . $e->getMessage();
+            return null;
+        }
+    }
+
+    public function createContact(string $name, string $email, string $phone_number): void {
+    try {
+        // Préparer la requête d'insertion
+        $statement = $this->db->prepare('INSERT INTO contact (name, email, phone_number) VALUES (:name, :email, :phone)');
+        
+        // Associer les paramètres et exécuter la requête
+        $statement->execute([
+            ':name' => $name,
+            ':email' => $email,
+            ':phone' => $phone_number,
+        ]);
+
+        echo "Le contact a été créé avec succès." . PHP_EOL;
+    } catch (PDOException $e) {
+        echo 'Erreur lors de la création du contact : ' . $e->getMessage() . PHP_EOL;
     }
 }
 
-// Bloc de test pour vérifier le bon fonctionnement de la méthode findAll()
-try {
-    // Création d'une instance de ContactManager
-    $contactManager = new ContactManager();
+public function deleteContact(int $id): void {
+    try {
+        // Préparer la requête de suppression
+        $statement = $this->db->prepare('DELETE FROM contact WHERE id = :id');
+        
+        // Exécuter la requête avec l'ID du contact
+        $statement->execute([':id' => $id]);
 
-    // Appel de la méthode findAll() pour récupérer tous les contacts
-    $contacts = $contactManager->findAll();
-    
-    // Affiche les objets Contact récupérés pour vérifier qu'ils ont bien été chargés
-    var_dump($contacts);
-} catch (Exception $e) {
-    // En cas d'erreur, affiche le message d'erreur
-    echo 'Erreur : ' . $e->getMessage();
+        if ($statement->rowCount() > 0) {
+            echo "Le contact avec l'ID $id a été supprimé avec succès." . PHP_EOL;
+        } else {
+            echo "Aucun contact trouvé avec l'ID $id." . PHP_EOL;
+        }
+    } catch (PDOException $e) {
+        echo 'Erreur lors de la suppression du contact : ' . $e->getMessage() . PHP_EOL;
+    }
 }
-?>
+
+public function modifyContact(int $id, string $name, string $email, string $phone_number): void {
+    try {
+        // Préparer la requête de mise à jour
+        $statement = $this->db->prepare(
+            'UPDATE contact SET name = :name, email = :email, phone_number = :phone WHERE id = :id'
+        );
+        
+        // Exécuter la requête avec les paramètres fournis
+        $statement->execute([
+            ':name' => $name,
+            ':email' => $email,
+            ':phone' => $phone_number,
+            ':id' => $id
+        ]);
+
+        if ($statement->rowCount() > 0) {
+            echo "Le contact avec l'ID $id a été mis à jour avec succès." . PHP_EOL;
+        } else {
+            echo "Aucun contact trouvé avec l'ID $id." . PHP_EOL;
+        }
+    } catch (PDOException $e) {
+        echo 'Erreur lors de la mise à jour du contact : ' . $e->getMessage() . PHP_EOL;
+    }
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Bloc de test pour vérifier le bon fonctionnement de la méthode findAll()
+// try {
+//     // Création d'une instance de ContactManager
+//     $contactManager = new ContactManager();
+
+//     // Appel de la méthode findAll() pour récupérer tous les contacts
+//     $contacts = $contactManager->findAll();
+    
+//     // Affiche les objets Contact récupérés pour vérifier qu'ils ont bien été chargés
+//     var_dump($contacts);
+// } catch (Exception $e) {
+//     // En cas d'erreur, affiche le message d'erreur
+//     echo 'Erreur : ' . $e->getMessage();
+// }
+// 

@@ -40,7 +40,7 @@ class DBConnect {
     {
         // Si l'instance n'est pas encore créée, en crée une nouvelle
         if (is_null(self::$instance)) {
-            var_dump("Classe instanciée");
+            // echo "Classe instanciée" . PHP_EOL;
             self::$instance = new self();
         }
         // Retourne l'instance unique de DBConnect
@@ -53,21 +53,24 @@ class DBConnect {
     }
 }
 
-// Bloc de test pour vérifier le fonctionnement de la classe DBConnect
-try {
-    // Appel à la méthode statique getInstance() pour obtenir l'instance unique de DBConnect
-    $db = DBConnect::getInstance();
 
-    // Appel de la méthode getPDO pour récupérer l'objet PDO
-    $pdo = $db->getPDO();
 
-    // Exécution d'une requête SQL simple pour tester la connexion
-    $statement = $pdo->query('SELECT 1');
 
-    // Affiche un message de succès si la connexion et la requête se sont bien déroulées
-    echo 'Connexion réussie et requête exécutée avec succès.';
-} catch (Exception $e) {
-    // Capture et affiche un message d'erreur en cas de problème de connexion ou d'exécution de la requête
-    echo 'Erreur : ' . $e->getMessage();
-}
-?>
+// // Bloc de test pour vérifier le fonctionnement de la classe DBConnect
+// try {
+//     // Appel à la méthode statique getInstance() pour obtenir l'instance unique de DBConnect
+//     $db = DBConnect::getInstance();
+
+//     // Appel de la méthode getPDO pour récupérer l'objet PDO
+//     $pdo = $db->getPDO();
+
+//     // Exécution d'une requête SQL simple pour tester la connexion
+//     $statement = $pdo->query('SELECT 1');
+
+//     // Affiche un message de succès si la connexion et la requête se sont bien déroulées
+//     echo "Connexion réussie et requête exécutée avec succès." . PHP_EOL;
+// } catch (Exception $e) {
+//     // Capture et affiche un message d'erreur en cas de problème de connexion ou d'exécution de la requête
+//     echo 'Erreur : ' . $e->getMessage();
+// }
+
