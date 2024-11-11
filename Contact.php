@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Déclaration de la classe Contact pour gérer les informations d'un contact
 class Contact {
-    // Attributs privés représentant les champs de la base de données, `?` indique que chaque attribut peut être nul
+    // Propriétés / attributs privés représentant les champs de la base de données, `?` indique que chaque attribut peut être null
     private ?int $id;
     private ?string $name;
     private ?string $email;
@@ -15,7 +15,8 @@ class Contact {
         $this->name = $name;
         $this->email = $email;
         $this->phone_number = $phone_number;
-        $this->id = null; // Initialise l'ID à null, il peut être modifié après l'insertion en base
+        // Initialise l'ID à null, qui sera affecté après l'insertion en base de donnée
+        $this->id = null; 
     }
 
     // Assesseur pour l'ID
@@ -59,26 +60,11 @@ public function setId(int $id): void {
         $this->phone_number = $phone_number;
     }
 
-    // Méthode toString pour afficher l'objet Contact sous forme de chaîne
+    // Méthode magique toString pour afficher l'objet Contact sous forme de chaîne
     public function __toString(): string {
     return "{$this->id}, {$this->name}, {$this->email}, {$this->phone_number}";
 }
 
 }
-
-
-
-
-
-
-
-
-
-// // Bloc de test pour vérifier le bon fonctionnement de la classe Contact
-// // Crée une instance de Contact
-// $contact = new Contact("John Doe", "john.doe@inconnu.com", "02458796");
-
-// // Affiche les informations du contact en utilisant __toString (via echo directement)
-// echo $contact->toString();
 
 

@@ -1,4 +1,5 @@
 <?php
+// Utilisation d'un singleton pattern : à savoir, une seule instance de la classe, l'accès à cet instance via une méthode statique et l'empêchement de la création d'instances multiples grâce à un constructeur privé.
 // Active le mode strict des types pour exiger que les arguments et les valeurs de retour respectent strictement les types déclarés
 declare(strict_types=1);
 
@@ -56,7 +57,7 @@ class DBConnect {
 
 
 
-// // Bloc de test pour vérifier le fonctionnement de la classe DBConnect
+//  Définition du Bloc de test me permettant de vérifier le fonctionnement de la classe DBConnect lors de sa création
 // try {
 //     // Appel à la méthode statique getInstance() pour obtenir l'instance unique de DBConnect
 //     $db = DBConnect::getInstance();
