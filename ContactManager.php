@@ -2,11 +2,11 @@
     // Active le typage strict
     declare(strict_types=1);
 
-    spl_autoload_register();
-    // // Inclusion du fichier contenant la classe DBConnect pour gérer la connexion à la base de données
-    // require_once 'DBConnect.php';
-    // // Inclusion du fichier contenant la classe Contact pour pouvoir l'utiliser dans ContactManager
-    // require_once 'Contact.php';
+
+    // Inclusion du fichier contenant la classe DBConnect pour gérer la connexion à la base de données
+    require_once 'DBConnect.php';
+    // Inclusion du fichier contenant la classe Contact pour pouvoir l'utiliser dans ContactManager
+    require_once 'Contact.php';
 
     // Déclaration de la classe ContactManager pour gérer les opérations CRUD (Create, Read, Update, Delete) sur les contacts
 

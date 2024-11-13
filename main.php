@@ -4,12 +4,10 @@
 
     // Inclusion des fichiers nécessaires pour pouvoir utiliser les classes ContactManager, Contact et Command.
     // Ce qui rendra disponibles toutes les fonctions et propriétés définies dans les classes de ces fichiers.
-    // require_once 'ContactManager.php'; 
-    // require_once 'Contact.php';
-    // require_once 'Command.php';
+    require_once 'ContactManager.php'; 
+    require_once 'Contact.php';
+    require_once 'Command.php';
 
-    // COntinuer avec require_once ou spl_autoload_register?
-    spl_autoload_register();
 
     // Création d'une nouvelle instance de la classe Command, qui contient les fonctions permettant de gérer les commandes utilisateur.
     $commandOrder = new Command();
